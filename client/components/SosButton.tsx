@@ -1,4 +1,4 @@
-import { ACTIVE_COLOR, INACTIVE_COLOR } from "@/constants";
+import { ACTIVE_COLOR, API_URL, INACTIVE_COLOR } from "@/constants";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useEffect, useRef, useState } from "react";
 import { Pressable, View } from "react-native";
@@ -11,11 +11,17 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import Svg, { Circle } from "react-native-svg";
-import * as Haptics from 'expo-haptics';
+import * as Haptics from "expo-haptics";
+import { useEngine } from "@/context/EngineContext";
+import { useLocation } from "@/context/LocationContext";
 
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 export default function SosButton() {
+  const { authenticated, name } = useEngine();
+  const { location } = useLocation();
+
+
   const scale = useSharedValue(1);
   const progress = useSharedValue(0);
   const colorProgress = useSharedValue(0); // 0 = Inactive, 1 = Active
@@ -23,7 +29,7 @@ export default function SosButton() {
   const holdTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [isLongPress, setIsLongPress] = useState(false);
 
-  const size = 280; 
+  const size = 280;
   const strokeWidth = 10;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -46,14 +52,14 @@ export default function SosButton() {
     const backgroundColor = interpolateColor(
       colorProgress.value,
       [0, 1],
-      [INACTIVE_COLOR, ACTIVE_COLOR]
+      [INACTIVE_COLOR, ACTIVE_COLOR],
     );
     return { backgroundColor };
   });
 
   const startHold = () => {
     setIsLongPress(false);
-    
+
     colorProgress.value = withTiming(1, { duration: 200 });
     progress.value = withTiming(1, { duration: 2000 });
 
@@ -76,26 +82,72 @@ export default function SosButton() {
     }
   };
 
+
+  const handleFetch = async (crit: boolean) => {
+
+    const date = new Date(Date.now())
+    date.toLocaleTimeString([], 
+      {
+        hour: '2-digit',
+        minute: '2-digit'
+      }
+    )
+
+    try {
+      const response = await fetch(`${API_URL}postNotification`, {
+        method: 'POST',
+        headers: {
+          
+          'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify({
+          uid: authenticated,
+          name: name,
+          critical: crit,
+          location: {
+            lat: location?.latitude,
+            lon: location?.longitude,
+            time: date
+          }
+
+        })
+      })
+
+
+    return response.json()
+
+    } catch {
+
+    }
+
+  }
+
+
   const handleLongPressComplete = () => {
     console.log("SOS Triggered");
-    Haptics.notificationAsync(
-        Haptics.NotificationFeedbackType.Success
-    )
+    handleFetch(true)
+
+
+
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   };
 
   const handlePress = () => {
     console.log("Standard Press");
-    Haptics.impactAsync(
-        Haptics.ImpactFeedbackStyle.Rigid
-    )
+    handleFetch(false)
+
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Rigid);
   };
 
+
+
+
+
+  
   useEffect(() => {
-    scale.value = withRepeat(
-      withTiming(1.6, { duration: 1600 }),
-      -1,
-      false
-    );
+    scale.value = withRepeat(withTiming(1.6, { duration: 1600 }), -1, false);
   }, []);
 
   return (

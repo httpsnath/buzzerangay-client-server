@@ -1,6 +1,6 @@
 import { View, Text, Image } from "react-native";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import MapView from "react-native-maps";
+import MapView, { Marker } from "react-native-maps";
 
 
 
@@ -36,7 +36,6 @@ export default function NotificationComponent({
                     <Text className="text-xl">{from.name}</Text>
                     <View className="h-[1px] bg-black w-full rounded-lg" />
                     <Text className="text-xs">{location.time}</Text>
-                    <Text className="text-sm">{location.location}</Text>
                 </View>
 
                 <View className="absolute top-0 right-0 z-10">
@@ -44,8 +43,29 @@ export default function NotificationComponent({
                 </View>
 
             </View>
-            <View >
-                <MapView style={{flex: 1, height: 150, width: "100%", borderRadius: 10 }}/>
+            <View className="rounded-2xl overflow-hidden">
+                <MapView style={{ height: 150, width: "100%", borderRadius: 10 }}
+                initialRegion={{
+                    latitude: Number(location.lat),
+                    longitude: Number(location.lon),
+                    latitudeDelta: 0.01,
+                    longitudeDelta: 0.01,
+                }}
+                >
+
+                    <Marker 
+                        coordinate={{
+                            latitude: Number(location.lat),
+                            longitude: Number(location.lon)
+                        }}
+                        title={from.name}
+                        description="Emergency Location"
+                        // 3. Dynamic color based on critical prop
+                        pinColor={critical ? "red" : "black"} 
+                    />      
+
+
+                </MapView>
 
             </View>
 

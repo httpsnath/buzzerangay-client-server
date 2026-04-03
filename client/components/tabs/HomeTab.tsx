@@ -1,42 +1,43 @@
-import { INACTIVE_COLOR, firstAidOptions, homeTabs } from "@/constants"
+import { API_URL, INACTIVE_COLOR, firstAidOptions, homeTabs } from "@/constants"
 import { View , Text, Pressable} from "react-native"
 import HomeButton from "../HomeButton"
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import NotificationComponent from "../NotificationComponent"
 import { BottomSheetScrollView, BottomSheetView } from "@gorhom/bottom-sheet"
 import FirstAidOptionComponent from "../FirstAidOptionsComponent";
 import Paragraph from "../Paragraph";
 import SosButton from "../SosButton"
+import { useEngine } from "@/context/EngineContext"
+import { useFocusEffect } from "expo-router"
 
 export default function HomeTab() {
-
+  const { authenticated } = useEngine()
   const [activeTab, setActiveTab] = useState("notifications-outline")
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
+  const [notifications, setNotifications] = useState<any[]>([]);
 
-const MOCK_NOTIFICATIONS = [
-  {
-    id: "1",
-    critical: true,
-    from: { name: "Relative 2" },
-    location: {
-      time: "2 mins ago",
-      location: "Dela Paz, San Simon, 2015 Pampanga, Philippines",
-      latitude: 15.024048, // 
-      longitude: 120.733153,
+
+
+  const fetchNotifs = async () => {
+    try {
+
+      const res = await fetch(`${API_URL}notifications/${authenticated}`);
+      const data = await res.json();
+
+      setNotifications(data.notifications || []);
+    } catch (err) {
+      console.log("Failed to fetch notifications", err);
+    } finally {
     }
-  },
-  {
-    id: "2",
-    critical: false,
-    from: { name: "Relative 1" },
-    location: {
-      time: "1 hour ago",
-      location: "2PHQ+PP3, San Simon, Pampanga, Philippines",
-      latitude: 15.027314,
-      longitude: 120.736920,
-    }
-  }
-];
+  };
+
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchNotifs();
+    }, [])
+  )
+
 
   const handleOptionClick = (index: number) => {
     setActiveIndex((prev) => (prev === index ? null : index))
@@ -65,11 +66,15 @@ const MOCK_NOTIFICATIONS = [
       {activeTab === "notifications-outline" && (
 
 
-        <BottomSheetScrollView contentContainerStyle={{ paddingBottom: 185 }}>
+        <BottomSheetScrollView contentContainerStyle={{ paddingBottom:   185 }}>
           <View className="mx-3 gap-2">
 
-            {MOCK_NOTIFICATIONS.map(item => (
-              <NotificationComponent key={item.id} critical={item.critical} from={{name: item.from.name}}  location={{time: item.location.time, location: item.location.location}} />
+            {notifications.map((item, index)=> (
+              <NotificationComponent 
+              key={index} 
+              critical={item.critical} 
+              from={{name: item.from.name}}  
+              location={{time: item.location.time, lat: item.location.lat, lon: item.location.lon}} />
             ))}
 
 

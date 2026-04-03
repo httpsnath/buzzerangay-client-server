@@ -5,6 +5,7 @@ import EvilIcons from '@expo/vector-icons/EvilIcons';
 import { useState } from "react";
 import { ACTIVE_COLOR } from "@/constants";
 import { useEngine } from "@/context/EngineContext";
+import * as Clipboard from 'expo-clipboard';
 
 
 export default function Settings() {
@@ -12,7 +13,9 @@ export default function Settings() {
     const [locationEnabled, setLocationEnabled] = useState(true)
     const { authenticated, phone_number, name, logout } = useEngine()
 
-
+    const handleCopyId = async () => {
+        await Clipboard.setStringAsync(String(authenticated))
+    }
     return (
         <View className="pt-16 flex-1 bg-white" >
             <View className="z-10 ml-3 mb-10  items-center" >
@@ -79,7 +82,7 @@ export default function Settings() {
 
             <View className="mx-3 mt-3 "
             >
-                <View className=" rounded-2xl p-2 flex-row  bg-white items-center z-20" style={{
+                <Pressable className=" rounded-2xl p-2 flex-row  bg-white items-center z-20" style={{
                     shadowColor: "#000",
                     shadowOffset: {
                         width: 0,
@@ -88,7 +91,8 @@ export default function Settings() {
                     shadowOpacity: 0.32,
                     shadowRadius: 5.46,
 
-                    elevation: 9,}}>
+                    elevation: 9,}}
+                    onPress={() => {handleCopyId()}}>
                     <View className="  items-center justify-center" >
                         <EvilIcons name="user" size={35} color="black" />
 
@@ -98,7 +102,7 @@ export default function Settings() {
                         <Text className="font-bold text-l ml-1 " > {authenticated} </Text>
 
                     </View>
-                </View>
+                </Pressable>
             </View>
 
             <View className="mx-3 "

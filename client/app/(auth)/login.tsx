@@ -73,9 +73,9 @@ export default function AuthScreen() {
         setResponse(data.detail)
        } else {
         setResponse(data.message)
-        applyPhone(phone)
-        applyName(name)
-        login(data.user_id)
+        applyPhone(data.user_info.phone)
+        applyName(data.user_info.name)
+        login(data.user_info.user_id)
 
 
        }

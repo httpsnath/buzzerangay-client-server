@@ -40,9 +40,6 @@ export default function FamilyContact({
                         <Text className="text-xl flex-1">{name}</Text>
 
                         <View className="flex-row gap-2 mb-2 mr-2">
-                            <Pressable className="border rounded-full h-8 w-8 justify-center items-center">
-                                <AntDesign name="star" size={16} color="black" />
-                            </Pressable>
 
                             <Pressable className="border rounded-full h-8 w-8 justify-center items-center">
                                 <Feather name="phone-call" size={16} color="black" />
