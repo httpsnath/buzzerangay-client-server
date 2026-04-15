@@ -1,9 +1,13 @@
 {
   "expo": {
-    "name": "client",
-    "slug": "client",
+    "name": "Buzzerangay",
+    "slug": "Buzzerangay",
     "version": "1.0.0",
     "orientation": "portrait",
+    "splash": {      
+      "image": "./assets/images/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"},
     "icon": "./assets/images/icon.png",
     "scheme": "client",
     "userInterfaceStyle": "automatic",
@@ -31,7 +35,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",

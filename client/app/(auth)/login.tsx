@@ -19,7 +19,7 @@ import { Redirect } from "expo-router";
 import { fetch } from "expo/fetch"
 
 export default function AuthScreen() {
-  const { authenticated, login, applyPhone, applyName } = useEngine();
+  const { authenticated, login, applyPhone, applyName, applyRole } = useEngine();
   const [mode, setMode] = useState<"login" | "signup">("login");
 
   const [name, setName] = useState("");
@@ -75,6 +75,7 @@ export default function AuthScreen() {
         setResponse(data.message)
         applyPhone(data.user_info.phone)
         applyName(data.user_info.name)
+        applyRole(data.user_info.role)
         login(data.user_info.user_id)
 
 

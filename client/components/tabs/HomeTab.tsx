@@ -1,7 +1,7 @@
 import { API_URL, INACTIVE_COLOR, firstAidOptions, homeTabs } from "@/constants"
 import { View , Text, Pressable} from "react-native"
 import HomeButton from "../HomeButton"
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import NotificationComponent from "../NotificationComponent"
 import { BottomSheetScrollView, BottomSheetView } from "@gorhom/bottom-sheet"
 import FirstAidOptionComponent from "../FirstAidOptionsComponent";
@@ -15,6 +15,8 @@ export default function HomeTab() {
   const [activeTab, setActiveTab] = useState("notifications-outline")
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
   const [notifications, setNotifications] = useState<any[]>([]);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
 
 
 
@@ -32,12 +34,27 @@ export default function HomeTab() {
   };
 
 
+
   useFocusEffect(
     useCallback(() => {
       fetchNotifs();
-    }, [])
-  )
 
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+
+      intervalRef.current = setInterval(() => {
+        fetchNotifs();
+      }, 5000);
+
+      return () => {
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
+      };
+    }, [])
+  );
 
   const handleOptionClick = (index: number) => {
     setActiveIndex((prev) => (prev === index ? null : index))

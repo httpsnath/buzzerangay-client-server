@@ -7,7 +7,7 @@ import { useRouter } from "expo-router";
 export default function FamilyContact({
     name,
     contact_no,
-    avatar,
+    usr_id,
     favorite
 }: any) {
     const router = useRouter();
@@ -53,6 +53,7 @@ export default function FamilyContact({
                                     params: {
                                         to: contact_no,
                                         name: name,
+                                        usr_id: usr_id
                                     },
                                     });
                                 }}

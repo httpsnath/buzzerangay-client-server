@@ -35,7 +35,7 @@ export default function NotificationComponent({
                 <View className="flex-1">
                     <Text className="text-xl">{from.name}</Text>
                     <View className="h-[1px] bg-black w-full rounded-lg" />
-                    <Text className="text-xs">{location.time}</Text>
+                    <Text className="text-xs">{new Date(location.time).toLocaleString()}</Text>
                 </View>
 
                 <View className="absolute top-0 right-0 z-10">
@@ -60,7 +60,6 @@ export default function NotificationComponent({
                         }}
                         title={from.name}
                         description="Emergency Location"
-                        // 3. Dynamic color based on critical prop
                         pinColor={critical ? "red" : "black"} 
                     />      
 

@@ -5,12 +5,14 @@ type EngineContextType = {
     authenticated: string | null;
     phone_number: string | null
     name: string | null
+    role: string | null
 
     login: (userData: any) => void;
     logout: () => void;
 
     applyPhone: (phone: any) => void
     applyName: (name: string) => void
+    applyRole: (role: string) => void
 
 }
 
@@ -23,6 +25,7 @@ export default function EngineProvider({children}: any) {
     const [authenticated, setAuthenticated] = useState<string | null>(null)
     const [phone_number, setPhone_number] = useState<string | null>(null)
     const [name, setName] = useState<string | null>(null)
+    const [role, setRole] = useState<string | null>(null)
 
     const login = (userData: any) => {
         setAuthenticated(userData)
@@ -45,13 +48,15 @@ export default function EngineProvider({children}: any) {
         setName(name)
     }
 
-
+    const applyRole = (role: any) => {
+        setRole(role)
+    }
 
 
 
 
     return (
-        <EngineContext.Provider value={{authenticated, name, phone_number, login, logout, applyName, applyPhone}}>
+        <EngineContext.Provider value={{authenticated, name, role, phone_number, login, logout, applyName, applyPhone, applyRole}}>
             {children}
         </EngineContext.Provider>
     )

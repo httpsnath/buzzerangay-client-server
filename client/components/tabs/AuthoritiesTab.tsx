@@ -4,39 +4,70 @@ import { Pressable, Text, View } from "react-native"
 import AuthoritiesButton from "../AuthoritiesButton"
 import { BottomSheetTextInput, BottomSheetView } from "@gorhom/bottom-sheet"
 import { useEffect, useState } from "react"
-import { ACTIVE_COLOR, authoritiesOption, INACTIVE_COLOR } from "@/constants"
+import { ACTIVE_COLOR, API_URL, authoritiesOption, INACTIVE_COLOR } from "@/constants"
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Haptics from 'expo-haptics';
+import { useLocation } from "@/context/LocationContext"
+import { useEngine } from "@/context/EngineContext"
 
 
 export default function AuthoritiesTab() {
     const SUBMIT_COOLDOWN = 5 // seconds
-
+    const { location} = useLocation()
+    const { authenticated, name } = useEngine()
     const [selected, setSelected] = useState("PNP")
     const [submitted, setSubmitted] = useState(false)
+    const [extra, setExtra] = useState("")
 
 
     const handleChooseOption = (self: string) => {
         setSelected(self)
     }
 
-    const handleSubmit = () => {
 
-        Haptics.impactAsync(
-            Haptics.ImpactFeedbackStyle.Heavy
-        )
-        console.log("submitted")
-        setSubmitted(true)
+    const handleSubmit = async () => {
+        const date = new Date();
 
-        setTimeout(() => {
-            setSubmitted(false)
-        }, SUBMIT_COOLDOWN * 1000)
-    }
+        try {
+            const response = await fetch(`${API_URL}postBackup`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    uid: authenticated,
+                    name: name,
+                    need: selected,
+                    extra: extra,
+                    location: {
+                        lat: location?.latitude,
+                        lon: location?.longitude,
+                        time: date.toISOString()
+                    }
+                })
+            });
+
+            const data = await response.json();
+
+            await Haptics.impactAsync(
+                Haptics.ImpactFeedbackStyle.Heavy
+            );
+
+            console.log("submitted");
+            setSubmitted(true);
+
+            setTimeout(() => {
+                setSubmitted(false);
+            }, SUBMIT_COOLDOWN * 1000);
+
+            return data;
+
+        } catch (err) {
+            console.error("Submit failed:", err);
+        }
+    };
 
 
-    const handleInputChange = () => {
-        console.log("text")
-    }
 
     useEffect(() => {
         console.log("pressed: ", selected)
@@ -84,7 +115,7 @@ export default function AuthoritiesTab() {
             </View>
 
             <BottomSheetTextInput 
-                onChange={() => handleInputChange()}
+                onChangeText={setExtra}
                 placeholder="Input extra details here..."
                 placeholderTextColor={"black"}
                 multiline={true}

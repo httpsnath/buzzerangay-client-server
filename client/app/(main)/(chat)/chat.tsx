@@ -12,19 +12,65 @@ import {
 import { useLocalSearchParams, useRouter } from "expo-router";
 import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useEngine } from "@/context/EngineContext";  
+import { API_URL } from "@/constants";
 
 export default function Chat() {
-  const { to, name } = useLocalSearchParams();
+  const { authenticated } = useEngine()
+  const { to, usr_id, name } = useLocalSearchParams();
   const router = useRouter();
   const flatListRef = useRef<FlatList>(null);
   const [input, setInput] = useState("");
 
   // --- MOCK DATA FOR DESIGN ---
-  const myId = "user1";
-  const [messages, setMessages] = useState<any[]>([
-    { sender: "other", message: "Musta pre?", timestamp: "9:02 AM" },
-    { sender: "user1", message: "K lang.", timestamp: "9:03 AM" },
-  ]);
+  const myId = authenticated;
+
+
+  const [messages, setMessages] = useState<any[]>([]);
+
+
+  const fetchMessages = async () => {
+    try {
+      const res = await fetch(`${API_URL}getMessages`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          uid1: myId,
+          uid2: usr_id,
+        }),
+      });
+      const data = await res.json();
+
+      setMessages(
+        (data.messages || []).map((m: any) => ({
+          sender: m.from,
+          message: m.message,
+          timestamp: new Date(m.time).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        }))
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+
+
+
+
+
+
+
+  useEffect(() => {
+    fetchMessages();
+
+    const interval = setInterval(fetchMessages, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     setTimeout(() => {
@@ -32,17 +78,47 @@ export default function Chat() {
     }, 100);
   }, [messages]);
 
-  const sendMessage = () => {
+
+
+
+
+
+
+
+
+
+
+  const sendMessage = async () => {
     if (!input.trim()) return;
 
     const newMessage = {
       sender: myId,
       message: input,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      timestamp: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
     };
 
+    // Optimistic UI
     setMessages((prev) => [...prev, newMessage]);
     setInput("");
+
+    try {
+      await fetch(`${API_URL}sendMessage`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from_uid: myId,
+          to_uid: usr_id,
+          message: input,
+        }),
+      });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const renderItem = ({ item }: any) => {

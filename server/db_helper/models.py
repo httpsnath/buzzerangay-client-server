@@ -10,6 +10,7 @@ class Account(BaseModel):
     name: str
     phone: str
     password: str
+    role: str
 
 class AccountStorage(BaseModel):
     _id: Field(alias="_id")
@@ -47,3 +48,26 @@ class PostNotification(BaseModel):
 class AddContact(BaseModel):
     uid: str
     add_user: str
+
+class PostBackupRequest(BaseModel):
+    uid: str
+    name: str
+    need: str
+    extra: str
+    location: Location
+
+class PostAnnouncementRequest(BaseModel):
+    from_user: str
+    uid: str
+    title: str
+    message: str
+    time: str
+
+class SendMessageRequest(BaseModel):
+    from_uid: str
+    to_uid: str
+    message: str
+
+class GetMessagesRequest(BaseModel):
+    uid1: str
+    uid2: str

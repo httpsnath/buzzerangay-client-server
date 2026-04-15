@@ -25,7 +25,7 @@ export default function AddContactScreen() {
         body: JSON.stringify({ 
 
             uid: authenticated,
-            add_user: uid
+            add_user: `USR-${uid}`
         
         }),
       });
@@ -57,7 +57,7 @@ export default function AddContactScreen() {
       <TextInput
         value={uid}
         onChangeText={setUid}
-        placeholder="e.g. 1458463d-.."
+        placeholder="USR-.."
         className="border border-gray-300 rounded-xl px-4 py-3 mb-5"
       />
 

@@ -86,6 +86,7 @@ export default function Contacts() {
                 key={item.uid}
                 name={item.name}
                 contact_no={item.phone}
+                usr_id={item.uid}
               />
             ))
           }
@@ -94,7 +95,10 @@ export default function Contacts() {
 
         {activeTab === "Responders" && (
           <>
-            <ResponderContact name="Nathan Pogi" contact_no="+63123456789" />
+            <ResponderContact name="BFP" contact_no="+63123456789" />
+            <ResponderContact name="PNP" contact_no="+63123456789" />
+            <ResponderContact name="AMBULANCE" contact_no="+63123456789" />
+            <ResponderContact name="BARANGAY" contact_no="+63123456789" />
           </>
         )}
       </ScrollView>

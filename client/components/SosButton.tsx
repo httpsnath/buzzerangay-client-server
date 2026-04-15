@@ -85,14 +85,7 @@ export default function SosButton() {
 
   const handleFetch = async (crit: boolean) => {
 
-    const date = new Date(Date.now())
-    date.toLocaleTimeString([], 
-      {
-        hour: '2-digit',
-        minute: '2-digit'
-      }
-    )
-
+    const date = new Date()
     try {
       const response = await fetch(`${API_URL}postNotification`, {
         method: 'POST',
@@ -108,7 +101,7 @@ export default function SosButton() {
           location: {
             lat: location?.latitude,
             lon: location?.longitude,
-            time: date
+            time: date.toISOString()
           }
 
         })

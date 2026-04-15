@@ -7,7 +7,7 @@ import { useEngine } from "@/context/EngineContext";
 
 export default function TabsLayout() {
 
-  const { authenticated } = useEngine()
+  const { authenticated, role } = useEngine()
 
   if (!authenticated) {
     return <Redirect href={"/(auth)/login"} />
@@ -50,7 +50,28 @@ export default function TabsLayout() {
             ),
           }}
         />
+
+        <Tabs.Screen
+          name="officialtab"
+          options={{
+            title: "Officials Tab",
+            tabBarActiveTintColor: "white",
+            tabBarInactiveTintColor: "white",
+            tabBarIcon: () => (
+              <FontAwesome6 name="contact-book" size={20} color="white" />
+            ),
+            href: role === "official" ? "/officialtab" : null,
+          }}
+        />
+
+
+
+
+
       </Tabs>
+
+
+      
     </GestureHandlerRootView>
     //
   );

@@ -9,3 +9,6 @@ client = MongoClient(URI, server_api=ServerApi("1"))
 db = client.Buzzerangay
 accounts_collection = db['accounts']
 storage_collection = db['storage']
+requests_collection = db['requests']
+announcements_collection = db['announcements']
+messages_collection = db['messages']
